@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3 uid="uid://ba1at8liycet4"]
+
+[ext_resource type="Script" uid="uid://bs2dp1icef44j" path="res://scenes/slime_n.gd" id="1_5ofap"]
+[ext_resource type="Texture2D" uid="uid://ufh6so7t48f3" path="res://assets/PNG/Transperent/Icon29.png" id="1_l4mld"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5ofap"]
+size = Vector2(30.5, 30.5)
+
+[node name="SlimeN" type="CharacterBody2D"]
+script = ExtResource("1_5ofap")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_l4mld")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_5ofap")

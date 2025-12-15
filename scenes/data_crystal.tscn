@@ -1,0 +1,29 @@
+[gd_scene load_steps=4 format=3 uid="uid://c4kp7s3kdl1oc"]
+
+[ext_resource type="Script" uid="uid://crhsj2vsfl4od" path="res://scenes/data_crystal.gd" id="1_u0cjg"]
+[ext_resource type="Texture2D" uid="uid://bt2ow7wcghhho" path="res://assets/Gemstone_Icon_Kit/53.png" id="2_1xuy1"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_vrgwf"]
+size = Vector2(416, 416)
+
+[node name="DataCrystal" type="CharacterBody2D" groups=["crystal"]]
+script = ExtResource("1_u0cjg")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.05, 0.05)
+texture = ExtResource("2_1xuy1")
+
+[node name="Label" type="Label" parent="."]
+offset_right = 40.0
+offset_bottom = 23.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 5
+metadata/_edit_use_anchors_ = true
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+scale = Vector2(0.05, 0.05)
+shape = SubResource("RectangleShape2D_vrgwf")
