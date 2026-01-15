@@ -31,6 +31,7 @@ var auto_running := false
 
 
 func _ready():
+	
 	await get_tree().process_frame
 	await get_tree().process_frame
 	print("SortingCavern READY, finding UI...")
@@ -51,6 +52,7 @@ func _ready():
 	steps_ui.steps_finished.connect(_on_sort_finished)
 	print("UI global position: ", steps_ui.global_position)
 	print("SORTING CAVERN READY:", self)
+	
 
 
 
@@ -68,16 +70,22 @@ func _connect_doors():
 			var dr = room.get_node("DoorRight")
 			dr.target_room = rooms[i + 1].get_path() if i < rooms.size() - 1 else NodePath("")
 
-func move_player_to_room(room_name: String, spawn_point: String = "PlayerStart"):
-	var room = get_node(room_name)
+func move_player_to_room(room_path: NodePath, spawn_point: String = "PlayerStart"):
+	print("Moving to:", room_path)
+
+
+	var room := get_node(room_path)
 	if room:
-		var start = room.get_node(spawn_point)
+		var start := room.get_node(spawn_point)
 		player.global_position = start.global_position
+
 
 func _on_crystal_collected(value):
 	crystal_buffer.append(value)
 	add_value_to_ui(value)
 	print("Buffer:", crystal_buffer)
+	if not is_sorted(crystal_buffer):
+		PerfLogger.log_warning("Unsorted sequence detected")
 
 	if is_sorted(crystal_buffer):
 		print("Sorted! Clearing & unlocking exit")
@@ -141,3 +149,10 @@ func _on_reset():
 func _on_sort_finished():
 	exit_door.locked = false
 	exit_door.update_visual_state()
+
+func _notification(what):
+	if what == NOTIFICATION_WM_CLOSE_REQUEST:
+		print("WINDOW CLOSE DETECTED")
+		PerfLogger.write_log("Game quit via window close")
+		PerfLogger.finalize_log()
+		get_tree().quit()

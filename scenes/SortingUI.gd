@@ -233,3 +233,10 @@ func _on_slot_unhover(idx: int) -> void:
 		p.add_theme_stylebox_override("panel", selected_stylebox)
 	else:
 		p.add_theme_stylebox_override("panel", normal_stylebox)
+
+func _notification(what):
+	if what == NOTIFICATION_WM_CLOSE_REQUEST:
+		print("WINDOW CLOSE DETECTED")
+		PerfLogger.write_log("Game quit via window close")
+		PerfLogger.finalize_log()
+		get_tree().quit()

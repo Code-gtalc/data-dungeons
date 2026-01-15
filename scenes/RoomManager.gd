@@ -15,6 +15,7 @@ var sorting_ui_ref: Node = null
 func _ready():
 	print("--- RoomManager Ready (patched) ---")
 	get_tree().connect("tree_changed", Callable(self, "_on_tree_changed"))
+	
 
 func _on_tree_changed():
 	var scene = get_tree().current_scene
@@ -37,6 +38,9 @@ func _on_tree_changed():
 
 	# For SortingCavern scene: spawn player at scene's PlayerStart only once
 	if scene.name == "SortingCavern":
+		PerfLogger.log_loading_end("SortingCavern")
+		PerfLogger.write_log("Sorting Cavern fully initialized")
+		PerfLogger.write_log("Game session started")
 		# cache sorting UI
 		if sorting_ui_ref == null and scene.has_node(sorting_ui_node_path):
 			sorting_ui_ref = scene.get_node(sorting_ui_node_path)
@@ -122,6 +126,7 @@ func _on_door_entered(target_room):
 
 
 func change_room(room_name: String) -> void:
+	PerfLogger.log_loading_start()
 	if not rooms.has(room_name):
 		push_error("RoomManager: Room not found: " + room_name)
 		return
@@ -132,6 +137,7 @@ func change_room(room_name: String) -> void:
 		print("RoomManager: Player moved to", room_name, "pos=", spawn.global_position)
 	for r in rooms.values():
 		r.visible = (r == room)
+	PerfLogger.log_loading_end(str(room_name))
 
 
 # --- Unlock / lock exit doors ---
@@ -184,3 +190,10 @@ func disable_room_blocker(room: Node):
 func set_door_blocker_visual(room: Node, visible: bool):
 	if room.has_node("DoorBlockerVisual"):
 		room.get_node("DoorBlockerVisual").visible = visible
+
+func _notification(what):
+	if what == NOTIFICATION_WM_CLOSE_REQUEST:
+		print("WINDOW CLOSE DETECTED")
+		PerfLogger.write_log("Game quit via window close")
+		PerfLogger.finalize_log()
+		get_tree().quit()

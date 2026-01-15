@@ -40,3 +40,10 @@ func debug_crystals():
 		print(" -", crystal.name, 
 			"| Local:", crystal.position, 
 			"| Global:", crystal.global_position)
+
+func _notification(what):
+	if what == NOTIFICATION_WM_CLOSE_REQUEST:
+		print("WINDOW CLOSE DETECTED")
+		PerfLogger.write_log("Game quit via window close")
+		PerfLogger.finalize_log()
+		get_tree().quit()

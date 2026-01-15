@@ -53,3 +53,10 @@ func is_finished() -> bool:
 # --- Optional helper to add a new step dynamically ---
 func add_step(step_text: String) -> void:
 	steps.append(step_text)
+
+func _notification(what):
+	if what == NOTIFICATION_WM_CLOSE_REQUEST:
+		print("WINDOW CLOSE DETECTED")
+		PerfLogger.write_log("Game quit via window close")
+		PerfLogger.finalize_log()
+		get_tree().quit()

@@ -4,6 +4,8 @@ extends CharacterBody2D
 
 @onready var anim_player: AnimationPlayer = $AnimationPlayer
 
+var last_input_time := 0
+
 # Start facing RIGHT
 var last_dir: Vector2 = Vector2.RIGHT  
 var direction: Vector2 = Vector2.ZERO
@@ -12,6 +14,14 @@ func _ready():
 	anim_player.play("idle_right")   # Initial idle state
 	add_to_group("player")
 	print("Player ready, listening for crystals...")
+
+func _input(event):
+	if event.is_action_pressed("ui_left") \
+	or event.is_action_pressed("ui_right") \
+	or event.is_action_pressed("ui_up") \
+	or event.is_action_pressed("ui_down"):
+		last_input_time = Time.get_ticks_usec()
+
 
 
 func _physics_process(delta):
@@ -25,6 +35,13 @@ func _physics_process(delta):
 		velocity = direction * move_speed
 		_play_walk_animation()
 		last_dir = direction
+		# ---- INPUT RESPONSE LOGGING ----
+		if last_input_time > 0:
+			var response_time := Time.get_ticks_usec() - last_input_time
+			PerfLogger.log_input_response_time(response_time)
+
+			last_input_time = 0
+
 	else:
 		velocity = Vector2.ZERO
 		_play_idle_animation()
@@ -63,3 +80,10 @@ func _play_idle_animation():
 func _on_crystal_collected(value: int) -> void:
 	print("Collected crystal worth: ", value)
 	GameState.add_score(value)
+
+func _notification(what):
+	if what == NOTIFICATION_WM_CLOSE_REQUEST:
+		print("WINDOW CLOSE DETECTED")
+		PerfLogger.write_log("Game quit via window close")
+		PerfLogger.finalize_log()
+		get_tree().quit()
